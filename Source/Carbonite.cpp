@@ -25,13 +25,50 @@
 
 #include <cstdlib>
 
+#include "SDL.h"
+#include "spdlog/spdlog.h"
+
 #include "Engine.hpp"
 
 int main(int argc, char** argv)
 {
-
     if (!Carbonite::Engine::Initialize()) {
+        spdlog::critical("Failed to initialize engine!");
+        return EXIT_FAILURE;
+    }
 
+    SDL_Window* window = SDL_CreateWindow("Carbonite", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800,600, 0);
+
+    if (window == nullptr) {
+        spdlog::critical("Failed to create window: {}", SDL_GetError());
+        return EXIT_FAILURE;
+    }
+
+    bool exit = false;
+
+    while (!exit) {
+        SDL_Event event;
+
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    exit = true;
+                    break;
+                case SDL_WINDOWEVENT:
+
+                    switch (event.window.event) {
+                        case SDL_WINDOWEVENT_CLOSE:
+
+                            if (event.window.windowID == SDL_GetWindowID(window)) {
+                                exit = true;
+                            }
+
+                            break;
+                    }
+                    
+                    break;
+            }
+        }
     }
 
     atexit(Carbonite::Engine::DeInitialize);

@@ -2,5 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Lib/EnTT" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Lib/ImGui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Lib/SDL" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Lib/glm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Lib/miniaudio" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Lib/spdlog" vcs="Git" />
   </component>
 </project>

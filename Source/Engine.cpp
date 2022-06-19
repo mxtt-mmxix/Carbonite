@@ -23,8 +23,38 @@
  *
  */
 
-//
-// Created by Matthew McCall on 6/19/22.
-//
+#include <cstdint>
+
+#define SDL_MAIN_HANDLED
+#include "SDL.h"
+
+#include "spdlog/spdlog.h"
 
 #include "Engine.hpp"
+
+namespace {
+    constexpr std::uint32_t SUBSYSTEM_MASK = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
+}
+
+namespace Carbonite::Engine {
+
+    bool Initialize() {
+        if (SDL_WasInit(SUBSYSTEM_MASK) == SUBSYSTEM_MASK) {
+            spdlog::warn("Engine already initialized!");
+            return true;
+        }
+
+        SDL_SetMainReady();
+
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+            spdlog::critical("Failed to initialize SDL: {}", SDL_GetError());
+            return false;
+        }
+
+        return true;
+    }
+
+    void DeInitialize() {
+        SDL_Quit();
+    }
+}
