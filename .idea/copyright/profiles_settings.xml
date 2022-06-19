@@ -1,0 +1,10 @@
+<component name="CopyrightManager">
+  <settings default="Carbonite">
+    <module2copyright>
+      <element module="Project Source Files" copyright="Carbonite" />
+    </module2copyright>
+    <LanguageOptions name="ObjectiveC">
+      <option name="fileTypeOverride" value="3" />
+    </LanguageOptions>
+  </settings>
+</component>
