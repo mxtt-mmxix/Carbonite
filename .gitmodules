@@ -4,3 +4,6 @@
 [submodule "Lib/SDL"]
 	path = Lib/SDL
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "Lib/miniaudio"]
+	path = Lib/miniaudio
+	url = https://github.com/mackron/miniaudio.git
