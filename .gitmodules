@@ -13,3 +13,6 @@
 [submodule "Lib/EnTT"]
 	path = Lib/EnTT
 	url = https://github.com/skypjack/entt.git
+[submodule "Lib/ImGui"]
+	path = Lib/ImGui
+	url = https://github.com/ocornut/imgui.git
