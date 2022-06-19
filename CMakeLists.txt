@@ -10,7 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 
 set(SRC
-    Source/Carbonite.cpp Source/Engine.cpp Source/Engine.hpp)
+    Source/Carbonite.cpp Source/Init.cpp Source/Init.hpp)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SRC})
 

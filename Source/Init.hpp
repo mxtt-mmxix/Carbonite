@@ -23,38 +23,22 @@
  *
  */
 
-#include <cstdint>
+#ifndef CARBONITE_INIT_HPP
+#define CARBONITE_INIT_HPP
 
-#define SDL_MAIN_HANDLED
-#include "SDL.h"
+namespace Carbonite {
 
-#include "spdlog/spdlog.h"
+    /**
+     * Initializes the Engine: SDL etc.
+     * @return <code>true</code> if the Engine was initialized successfully.
+     */
+    bool Initialize();
 
-#include "Engine.hpp"
+    /**
+     * Shuts down the Engine.
+     */
+    void DeInitialize();
 
-namespace {
-    constexpr std::uint32_t SUBSYSTEM_MASK = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
 }
 
-namespace Carbonite::Engine {
-
-    bool Initialize() {
-        if (SDL_WasInit(SUBSYSTEM_MASK) == SUBSYSTEM_MASK) {
-            spdlog::warn("Engine already initialized!");
-            return true;
-        }
-
-        SDL_SetMainReady();
-
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-            spdlog::critical("Failed to initialize SDL: {}", SDL_GetError());
-            return false;
-        }
-
-        return true;
-    }
-
-    void DeInitialize() {
-        SDL_Quit();
-    }
-}
+#endif //CARBONITE_INIT_HPP

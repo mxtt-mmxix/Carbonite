@@ -28,11 +28,11 @@
 #include "SDL.h"
 #include "spdlog/spdlog.h"
 
-#include "Engine.hpp"
+#include "Init.hpp"
 
 int main(int argc, char** argv)
 {
-    if (!Carbonite::Engine::Initialize()) {
+    if (!Carbonite::Initialize()) {
         spdlog::critical("Failed to initialize engine!");
         return EXIT_FAILURE;
     }
@@ -55,23 +55,19 @@ int main(int argc, char** argv)
                     exit = true;
                     break;
                 case SDL_WINDOWEVENT:
-
                     switch (event.window.event) {
                         case SDL_WINDOWEVENT_CLOSE:
-
                             if (event.window.windowID == SDL_GetWindowID(window)) {
                                 exit = true;
                             }
-
                             break;
                     }
-                    
                     break;
             }
         }
     }
 
-    atexit(Carbonite::Engine::DeInitialize);
+    atexit(Carbonite::DeInitialize);
 
     return EXIT_SUCCESS;
 }
