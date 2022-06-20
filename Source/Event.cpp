@@ -27,8 +27,7 @@
 
 #include "Event.hpp"
 
-namespace Carbonite {
-
-
-
+namespace Carbonite::Event {
+    WindowResize::WindowResize(SDL_WindowEvent e) : w(e.data1), h(e.data2) { }
+    WindowMoved::WindowMoved(SDL_WindowEvent e) : x(e.data1), y(e.data2) { }
 }

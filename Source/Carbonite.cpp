@@ -28,23 +28,17 @@
 #include "SDL.h"
 #include "spdlog/spdlog.h"
 
-#include "Init.hpp"
 #include "Event.hpp"
+#include "Init.hpp"
+#include "Input.hpp"
 
-struct TestEvent {};
-
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
     if (!Carbonite::Initialize()) {
         spdlog::critical("Failed to initialize engine!");
         return EXIT_FAILURE;
     }
 
-    Carbonite::Sub<TestEvent> testSub { [](const TestEvent& e) {
-        spdlog::info("test event!");
-    } };
-
-    SDL_Window* window = SDL_CreateWindow("Carbonite", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800,600, 0);
+    SDL_Window *window = SDL_CreateWindow("Carbonite", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, 0);
 
     if (window == nullptr) {
         spdlog::critical("Failed to create window: {}", SDL_GetError());
@@ -53,25 +47,38 @@ int main(int argc, char** argv)
 
     bool exit = false;
 
+    Carbonite::Sub<Carbonite::Event::WindowClose> windowCloseSub {
+        [&exit, &window](const Carbonite::Event::WindowClose &e) {
+            if (e.windowID == SDL_GetWindowID(window)) exit = true;
+        }
+    };
+
+    Carbonite::Sub<Carbonite::Event::AppQuit> appQuitSub {[&exit](const auto &) {
+        exit = true;
+    } };
+
+    Carbonite::Bind::PhysicalKey(SDL_SCANCODE_ESCAPE, "Exit");
+
     while (!exit) {
         SDL_Event event;
 
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
-                    exit = true;
+                    Carbonite::Pub<Carbonite::Event::AppQuit>(event.quit);
                     break;
                 case SDL_WINDOWEVENT:
                     switch (event.window.event) {
                         case SDL_WINDOWEVENT_CLOSE:
-                            if (event.window.windowID == SDL_GetWindowID(window)) {
-                                exit = true;
-                                Carbonite::Pub(TestEvent {});
-                            }
+                            Carbonite::Pub<Carbonite::Event::WindowClose>(event.window);
                             break;
                     }
                     break;
             }
+        }
+
+        if (Carbonite::Get("Exit")) {
+            exit = true;
         }
     }
 

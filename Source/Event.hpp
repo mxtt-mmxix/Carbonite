@@ -31,9 +31,34 @@
 #include <functional>
 #include <vector>
 
+#include "SDL_events.h"
+
 #include "Random.hpp"
 
 namespace Carbonite {
+
+    namespace Event {
+        using AppQuit = SDL_QuitEvent;
+        using WindowClose = SDL_WindowEvent;
+
+        struct WindowResize {
+            WindowResize(SDL_WindowEvent);
+            std::int32_t w, h;
+        };
+
+        struct WindowMoved {
+            WindowMoved(SDL_WindowEvent);
+            std::int32_t x, y;
+        };
+
+        using KeyPressed = SDL_KeyboardEvent;
+        using KeyReleased = SDL_KeyboardEvent;
+
+        using MouseButtonDown = SDL_MouseButtonEvent;
+        using MouseButtonUp = SDL_MouseButtonEvent;
+        using MouseScrolledEvent = SDL_MouseWheelEvent;
+        using MouseMovedEvent = SDL_MouseMotionEvent;
+    }
 
     template<typename T>
     class Sub {
@@ -59,7 +84,7 @@ namespace Carbonite {
         }
 
         static std::vector<std::reference_wrapper<Sub<T>>> Subscribers;
-        const Callback &Func;
+        Callback Func;
 
     private:
         std::int32_t m_id;

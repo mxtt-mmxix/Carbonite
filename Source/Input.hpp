@@ -25,31 +25,30 @@
  *
  */
 
-#include <random>
-#include <unordered_set>
+#ifndef CARBONITE_INPUT_HPP
+#define CARBONITE_INPUT_HPP
 
-#include "Random.hpp"
+#include <string>
 
-namespace {
+#include "SDL_keyboard.h"
 
-    std::unordered_set<std::uint32_t> s_usedInt32s;
-
-}
+#include "Math.hpp"
 
 namespace Carbonite {
 
-    std::int32_t GetRandomInt32(std::int32_t min, std::int32_t max) {
+    Vec3 Get(const std::string&);
+    void UnBind(const std::string&);
 
-        static std::random_device s_device;
-        static std::mt19937 s_generator { s_device() };
+    namespace Bind {
 
-        std::int32_t int32 = std::uniform_int_distribution { min, max } (s_generator);
-        s_usedInt32s.insert(int32);
-        return int32;
-    }
+        void PhysicalKey(SDL_Scancode, const std::string&);
+        void UnicodeKey(SDL_Keycode, const std::string&);
 
-    void ReleaseRandomInt32(std::int32_t int32) {
-        s_usedInt32s.erase(int32);
+        void MouseButton(std::uint32_t, std::string);
+        void MouseMove(std::string);
+
     }
 
 }
+
+#endif //CARBONITE_INPUT_HPP

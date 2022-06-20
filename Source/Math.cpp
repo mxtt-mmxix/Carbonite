@@ -25,31 +25,15 @@
  *
  */
 
-#include <random>
-#include <unordered_set>
-
-#include "Random.hpp"
-
-namespace {
-
-    std::unordered_set<std::uint32_t> s_usedInt32s;
-
-}
+#include "Math.hpp"
 
 namespace Carbonite {
 
-    std::int32_t GetRandomInt32(std::int32_t min, std::int32_t max) {
+    Vec3::Vec3(float x, float y, float z) : glm::vec3 (x, y, z) {
 
-        static std::random_device s_device;
-        static std::mt19937 s_generator { s_device() };
-
-        std::int32_t int32 = std::uniform_int_distribution { min, max } (s_generator);
-        s_usedInt32s.insert(int32);
-        return int32;
     }
 
-    void ReleaseRandomInt32(std::int32_t int32) {
-        s_usedInt32s.erase(int32);
+    Vec3::operator bool() const {
+        return *this != glm::vec3 { 0 , 0, 0 };
     }
-
 }
