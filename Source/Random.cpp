@@ -1,3 +1,5 @@
+
+
 /*
  * MIT License
  *
@@ -23,39 +25,30 @@
  *
  */
 
-#include <cstdint>
+#include <random>
+#include <unordered_set>
 
-#define SDL_MAIN_HANDLED
-#include "SDL.h"
-
-#include "spdlog/spdlog.h"
-
-#include "Init.hpp"
+#include "Random.hpp"
 
 namespace {
-    constexpr std::uint32_t SUBSYSTEM_MASK = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
+
+    std::random_device s_device;
+    std::mt19937 s_generator { s_device() };
+
+    std::unordered_set<std::uint32_t> s_usedInt32s;
+
 }
 
 namespace Carbonite {
 
-    bool Initialize() {
-        if (SDL_WasInit(SUBSYSTEM_MASK) == SUBSYSTEM_MASK) {
-            spdlog::warn("Engine already initialized!");
-            return true;
-        }
-
-        SDL_SetMainReady();
-
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-            spdlog::critical("Failed to initialize SDL: {}", SDL_GetError());
-            return false;
-        }
-
-        atexit(Carbonite::DeInitialize);
-        return true;
+    std::int32_t GetRandomInt32(std::int32_t min, std::int32_t max) {
+        std::int32_t int32 = std::uniform_int_distribution { min, max } (s_generator);
+        s_usedInt32s.insert(int32);
+        return int32;
     }
 
-    void DeInitialize() {
-        SDL_Quit();
+    void ReleaseRandomInt32(std::int32_t int32) {
+        s_usedInt32s.erase(int32);
     }
+
 }

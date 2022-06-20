@@ -1,3 +1,5 @@
+
+
 /*
  * MIT License
  *
@@ -23,39 +25,55 @@
  *
  */
 
-#include <cstdint>
+#ifndef CARBONITE_EVENT_HPP
+#define CARBONITE_EVENT_HPP
 
-#define SDL_MAIN_HANDLED
-#include "SDL.h"
+#include <functional>
+#include <vector>
 
-#include "spdlog/spdlog.h"
-
-#include "Init.hpp"
-
-namespace {
-    constexpr std::uint32_t SUBSYSTEM_MASK = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
-}
+#include "Random.hpp"
 
 namespace Carbonite {
 
-    bool Initialize() {
-        if (SDL_WasInit(SUBSYSTEM_MASK) == SUBSYSTEM_MASK) {
-            spdlog::warn("Engine already initialized!");
-            return true;
+    template<typename T>
+    class Sub {
+
+        friend void Pub(const T &data);
+
+        using Callback = std::function<void(const T &)>;
+
+    public:
+        explicit Sub(Callback func) : Func(func) {
+            m_id = GetRandomInt32();
+            Sub<T>::Subscribers.push_back(*this);
         }
 
-        SDL_SetMainReady();
+        ~Sub() {
+            const auto &i = std::find_if(Sub<T>::Subscribers.begin(), Sub<T>::Subscribers.end(), [this](Sub<T> &sub) {
+                return this->m_id = sub.m_id;
+            });
 
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-            spdlog::critical("Failed to initialize SDL: {}", SDL_GetError());
-            return false;
+            if (i != Sub<T>::Subscribers.end()) Sub<T>::Subscribers.erase(i);
+
+            ReleaseRandomInt32(m_id);
         }
 
-        atexit(Carbonite::DeInitialize);
-        return true;
+        static std::vector<std::reference_wrapper<Sub<T>>> Subscribers;
+        const Callback &Func;
+
+    private:
+        std::int32_t m_id;
+    };
+
+    template<typename T> std::vector<std::reference_wrapper<Sub<T>>> Sub<T>::Subscribers{};
+
+    template<class T>
+    void Pub(const T &data) {
+        for (Sub<T> &i: Sub<T>::Subscribers) {
+            i.Func(data);
+        }
     }
 
-    void DeInitialize() {
-        SDL_Quit();
-    }
 }
+
+#endif //CARBONITE_EVENT_HPP

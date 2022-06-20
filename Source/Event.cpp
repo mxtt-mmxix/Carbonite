@@ -1,3 +1,5 @@
+
+
 /*
  * MIT License
  *
@@ -23,39 +25,10 @@
  *
  */
 
-#include <cstdint>
-
-#define SDL_MAIN_HANDLED
-#include "SDL.h"
-
-#include "spdlog/spdlog.h"
-
-#include "Init.hpp"
-
-namespace {
-    constexpr std::uint32_t SUBSYSTEM_MASK = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
-}
+#include "Event.hpp"
 
 namespace Carbonite {
 
-    bool Initialize() {
-        if (SDL_WasInit(SUBSYSTEM_MASK) == SUBSYSTEM_MASK) {
-            spdlog::warn("Engine already initialized!");
-            return true;
-        }
 
-        SDL_SetMainReady();
 
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-            spdlog::critical("Failed to initialize SDL: {}", SDL_GetError());
-            return false;
-        }
-
-        atexit(Carbonite::DeInitialize);
-        return true;
-    }
-
-    void DeInitialize() {
-        SDL_Quit();
-    }
 }

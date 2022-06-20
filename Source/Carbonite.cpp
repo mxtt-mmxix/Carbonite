@@ -29,6 +29,9 @@
 #include "spdlog/spdlog.h"
 
 #include "Init.hpp"
+#include "Event.hpp"
+
+struct TestEvent {};
 
 int main(int argc, char** argv)
 {
@@ -36,6 +39,10 @@ int main(int argc, char** argv)
         spdlog::critical("Failed to initialize engine!");
         return EXIT_FAILURE;
     }
+
+    Carbonite::Sub<TestEvent> testSub { [](const TestEvent& e) {
+        spdlog::info("test event!");
+    } };
 
     SDL_Window* window = SDL_CreateWindow("Carbonite", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800,600, 0);
 
@@ -59,6 +66,7 @@ int main(int argc, char** argv)
                         case SDL_WINDOWEVENT_CLOSE:
                             if (event.window.windowID == SDL_GetWindowID(window)) {
                                 exit = true;
+                                Carbonite::Pub(TestEvent {});
                             }
                             break;
                     }
@@ -66,8 +74,6 @@ int main(int argc, char** argv)
             }
         }
     }
-
-    atexit(Carbonite::DeInitialize);
 
     return EXIT_SUCCESS;
 }
